@@ -2,7 +2,10 @@
 
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import RobotScene from "./three/RobotScene";
+import dynamic from "next/dynamic";
+
+// JURUS PAMUNGKAS: Mencegah Next.js memproses Robot 3D di Server (SSR: false)
+const RobotScene = dynamic(() => import("./three/RobotScene"), { ssr: false });
 
 export default function Hero() {
   const scrollToAbout = () => {
