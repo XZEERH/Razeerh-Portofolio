@@ -1,11 +1,11 @@
 "use client";
 
-import React, { Component, ReactNode, Suspense, useRef } from "react";
+import React, { Component, ReactNode, Suspense, useRef, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, Float, ContactShadows, Html } from "@react-three/drei";
 import * as THREE from "three";
 
-// 🛡️ Error Boundary: Pelindung agar kalau file GLB tidak ada/salah nama, web tidak jadi layar hitam!
+// 🛡️ Error Boundary yang sesungguhnya
 class ModelErrorBoundary extends Component<{children: ReactNode}, {hasError: boolean}> {
   state = { hasError: false };
   static getDerivedStateFromError() { return { hasError: true }; }
@@ -13,10 +13,11 @@ class ModelErrorBoundary extends Component<{children: ReactNode}, {hasError: boo
     if (this.state.hasError) {
       return (
         <Html center>
-          <div className="text-red-400 bg-dark-900/80 p-6 border border-red-500/50 rounded-xl text-sm w-80 text-center glass-panel shadow-[0_0_30px_rgba(255,0,0,0.2)]">
+          <div className="text-red-400 bg-dark-900/90 p-6 border border-red-500/50 rounded-xl text-sm w-80 text-center glass-panel shadow-[0_0_30px_rgba(255,0,0,0.2)]">
             ⚠️ <b>Robot 3D Gagal Dimuat</b><br/><br/>
-            Pastikan file model sudah di-upload ke GitHub dan huruf besar/kecilnya sama persis seperti ini:<br/>
+            Cek apakah nama file sudah benar-benar:<br/>
             <code className="text-neon-cyan font-mono mt-3 block bg-white/5 p-2 rounded">public/models/tesla-robot.glb</code>
+            <br/>(Perhatikan huruf kecil semua, tanpa spasi)
           </div>
         </Html>
       );
@@ -26,6 +27,7 @@ class ModelErrorBoundary extends Component<{children: ReactNode}, {hasError: boo
 }
 
 function RobotModel() {
+  // Hanya memuat model dari dalam komponen, tanpa preload luar!
   const { scene } = useGLTF("/models/tesla-robot.glb");
   const robotRef = useRef<THREE.Group | any>(null);
 
@@ -49,6 +51,15 @@ function RobotModel() {
 }
 
 export default function RobotScene() {
+  const [mounted, setMounted] = useState(false);
+
+  // Mencegah mismatch antara server dan client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   return (
     <Canvas 
       camera={{ position: [0, 0, 6], fov: 45 }}
@@ -63,7 +74,7 @@ export default function RobotScene() {
       <Environment preset="city" />
       
       <ModelErrorBoundary>
-        <Suspense fallback={<Html center><div className="text-neon-cyan animate-pulse font-mono tracking-widest">LOADING ROBOT...</div></Html>}>
+        <Suspense fallback={<Html center><div className="text-neon-cyan animate-pulse font-mono tracking-widest text-sm">LOADING ASSETS...</div></Html>}>
           <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.5}>
             <RobotModel />
           </Float>
