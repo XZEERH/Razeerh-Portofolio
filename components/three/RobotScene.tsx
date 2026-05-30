@@ -1,41 +1,26 @@
 "use client";
 
-import React, { Component, ReactNode, Suspense, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF, Environment, Float, ContactShadows, Html } from "@react-three/drei";
+import { useGLTF, Environment, Float, ContactShadows } from "@react-three/drei";
+import { Suspense, useRef } from "react";
 import * as THREE from "three";
 
-// 🛡️ Error Boundary: Pelindung agar kalau file GLB tidak ada/salah nama, web tidak jadi layar hitam!
-class ModelErrorBoundary extends Component<{children: ReactNode}, {hasError: boolean}> {
-  state = { hasError: false };
-  static getDerivedStateFromError() { return { hasError: true }; }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <Html center>
-          <div className="text-red-400 bg-dark-900/80 p-6 border border-red-500/50 rounded-xl text-sm w-80 text-center glass-panel shadow-[0_0_30px_rgba(255,0,0,0.2)]">
-            ⚠️ <b>Robot 3D Gagal Dimuat</b><br/><br/>
-            Pastikan file model sudah di-upload ke GitHub dan huruf besar/kecilnya sama persis seperti ini:<br/>
-            <code className="text-neon-cyan font-mono mt-3 block bg-white/5 p-2 rounded">public/models/tesla-robot.glb</code>
-          </div>
-        </Html>
-      );
-    }
-    return this.props.children;
-  }
-}
-
 function RobotModel() {
+  // Pastikan path file benar: public/models/tesla-robot.glb
   const { scene } = useGLTF("/models/tesla-robot.glb");
-  const robotRef = useRef<THREE.Group | any>(null);
+  const robotRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     if (!robotRef.current) return;
+    
+    // Mouse/Touch tracking (-1 to +1 range)
     const pointerX = state.pointer.x;
     const pointerY = state.pointer.y;
-    
-    const targetRotationX = (pointerY * Math.PI) / 6;
-    const targetRotationY = (pointerX * Math.PI) / 4;
+
+    // Memutar keseluruhan model secara smooth mengikuti kursor/jari
+    // Ini metode paling aman jika nama tulang/bone dalam GLB tidak standar
+    const targetRotationX = (pointerY * Math.PI) / 6; // Atas bawah
+    const targetRotationY = (pointerX * Math.PI) / 4; // Kiri Kanan
 
     robotRef.current.rotation.y = THREE.MathUtils.lerp(robotRef.current.rotation.y, targetRotationY, 0.05);
     robotRef.current.rotation.x = THREE.MathUtils.lerp(robotRef.current.rotation.x, -targetRotationX, 0.05);
@@ -52,7 +37,7 @@ export default function RobotScene() {
   return (
     <Canvas 
       camera={{ position: [0, 0, 6], fov: 45 }}
-      dpr={[1, 2]} 
+      dpr={[1, 2]} // Optimasi untuk mobile & retina display
       gl={{ antialias: true, alpha: true }}
     >
       <ambientLight intensity={0.5} />
@@ -62,14 +47,15 @@ export default function RobotScene() {
       
       <Environment preset="city" />
       
-      <ModelErrorBoundary>
-        <Suspense fallback={<Html center><div className="text-neon-cyan animate-pulse font-mono tracking-widest">LOADING ROBOT...</div></Html>}>
-          <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.5}>
-            <RobotModel />
-          </Float>
-          <ContactShadows position={[0, -3, 0]} opacity={0.5} scale={10} blur={2} far={4} color="#00f3ff" />
-        </Suspense>
-      </ModelErrorBoundary>
+      <Suspense fallback={null}>
+        <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.5}>
+          <RobotModel />
+        </Float>
+        <ContactShadows position={[0, -3, 0]} opacity={0.5} scale={10} blur={2} far={4} color="#00f3ff" />
+      </Suspense>
     </Canvas>
   );
 }
+
+// Preload model agar loading lebih cepat
+useGLTF.preload("/models/tesla-robot.glb");
