@@ -1,10 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MousePointer2 } from "lucide-react";
 import dynamic from "next/dynamic";
 
-// JURUS PAMUNGKAS: Mencegah Next.js memproses Robot 3D di Server (SSR: false)
 const RobotScene = dynamic(() => import("./three/RobotScene"), { ssr: false });
 
 export default function Hero() {
@@ -17,18 +16,19 @@ export default function Hero() {
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-neon-cyan/10 rounded-full blur-[120px] pointer-events-none" />
       
-      {/* 3D Robot Canvas - Layered Behind Text */}
+      {/* 3D Robot Canvas */}
       <div className="absolute inset-0 z-0 pointer-events-auto">
         <RobotScene />
       </div>
 
-      {/* Touch Indicator for Mobile */}
+      {/* Indikator Mouse untuk Mobile (Diganti Kursor PC) */}
       <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20 md:hidden flex flex-col items-center animate-pulse text-white/50">
-        <span className="text-sm tracking-wider mb-1">Geser Layar</span>
-        <span className="text-2xl">👆</span>
+        <span className="text-sm tracking-wider mb-2">Geser Layar</span>
+        {/* Ikon Kursor */}
+        <MousePointer2 size={28} className="text-neon-cyan drop-shadow-[0_0_8px_rgba(0,243,255,0.8)]" />
       </div>
 
-      {/* Main Content - Layered Above Robot */}
+      {/* Main Content */}
       <div className="z-10 flex flex-col items-center justify-center text-center mt-32 md:mt-0 pointer-events-none">
         <motion.h1 
           initial={{ opacity: 0, scale: 0.9 }}
