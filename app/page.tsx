@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactLenis } from "@studio-freight/react-lenis";
+import { ReactLenis } from "lenis/react";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import Stack from "@/components/Stack";
