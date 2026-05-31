@@ -29,30 +29,29 @@ function RobotModel() {
   }, [scene]);
 
   useFrame((state) => {
-    // 1. Kunci mati rotasi badan, hanya animasi nafas (y)
+    // Kunci mati rotasi badan, berikan sedikit animasi pernapasan (naik-turun) yang natural
     if (robotRef.current) {
-      robotRef.current.position.y = -1.5 + Math.sin(state.clock.elapsedTime * 1.5) * 0.015; 
-      robotRef.current.rotation.set(0, 0, 0); // Kunci Total Rotasi Badan
+      robotRef.current.position.y = -4.0 + Math.sin(state.clock.elapsedTime * 1.5) * 0.015; 
+      robotRef.current.rotation.set(0, 0, 0); 
     }
 
-    // 2. Tracking murni hanya pada kepala
+    // Hanya KEPALA yang bergerak mengikuti mouse/jari dengan batasan natural
     if (headRef.current) {
       const pointerX = state.pointer.x;
       const pointerY = state.pointer.y;
       
-      const targetY = THREE.MathUtils.clamp(pointerX * 1.2, -1.0, 1.0); // Kiri-Kanan
-      const targetX = THREE.MathUtils.clamp(-pointerY * 0.8, -0.6, 0.6); // Atas-Bawah
+      const targetY = THREE.MathUtils.clamp(pointerX * 1.2, -1.0, 1.0); 
+      const targetX = THREE.MathUtils.clamp(-pointerY * 0.8, -0.6, 0.6); 
 
-      // Smooth tracking menggunakan lerp
       headRef.current.rotation.y = THREE.MathUtils.lerp(headRef.current.rotation.y, targetY, 0.08);
       headRef.current.rotation.x = THREE.MathUtils.lerp(headRef.current.rotation.x, targetX, 0.08);
-      headRef.current.rotation.z = 0; // Kunci kemiringan leher
+      headRef.current.rotation.z = 0; 
     }
   });
 
+  // Posisi Y robot diturunkan jauh ke -4.0, agar yang tertangkap layar adalah kepala dan dada
   return (
-    // Posisi diturunkan agar framing kamera pas di dada atas dan kepala
-    <group ref={robotRef} position={[0, -1.5, 0]} scale={2.4}>
+    <group ref={robotRef} position={[0, -4.0, 0]} scale={2.8}>
       <primitive object={scene} />
     </group>
   );
@@ -65,9 +64,8 @@ export default function RobotScene() {
 
   return (
     <Canvas 
-      // Framing Kamera Khusus: Fokus tepat di kepala & dada
-      camera={{ position: [0, 0.4, 2.5], fov: 45 }}
-      // Optimasi Performa Mobile (Limit resolusi shadow & pixel ratio)
+      // KAMERA DIARAHKAN TEPAT KE KEPALA DAN DADA ROBOT
+      camera={{ position: [0, 1.5, 4.5], fov: 40 }}
       dpr={typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 1.5) : 1} 
       performance={{ min: 0.5 }}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
