@@ -1,77 +1,78 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Globe } from "lucide-react";
+import { useLang } from "@/lib/i18n/LanguageContext";
 
-const navLinks = [
-  { name: "Beranda", href: "#hero" },
-  { name: "Tentang Saya", href: "#about" },
-  { name: "My Stack", href: "#stack" },
-  { name: "My Project", href: "#projects" },
-  { name: "Media Sosial", href: "#socials" },
-  { name: "Contact Me", href: "#contact" },
-];
+const languages = ["ID", "EN", "MY", "AR", "JP", "KR", "CN", "DE", "FR", "ES"] as const;
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const [showLang, setShowLang] = useState(false);
+  const { lang, setLang, t } = useLang();
 
   const scrollTo = (id: string) => {
     setIsOpen(false);
-    const element = document.querySelector(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+    document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "py-4 bg-dark-900/80 backdrop-blur-md border-b border-white/5" : "py-6"}`}>
+      <nav className="fixed top-0 w-full z-50 py-4 mix-blend-difference text-white">
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="text-xl font-bold tracking-widest text-white glow-text cursor-pointer" onClick={() => scrollTo('#hero')}>
-            RAZEERH<span className="text-neon-cyan">.</span>
+          <div className="text-xl font-bold tracking-tight font-space cursor-pointer" onClick={() => scrollTo('#hero')}>
+            RAZEERH.
           </div>
-          <button 
-            onClick={() => setIsOpen(true)}
-            className="text-white hover:text-neon-cyan transition-colors"
-          >
-            <Menu size={32} />
-          </button>
+          
+          <div className="flex items-center gap-6">
+            <div className="relative">
+              <button onClick={() => setShowLang(!showLang)} className="flex items-center gap-2 hover:opacity-70 transition">
+                <Globe size={18} /> <span className="text-sm font-medium">{lang}</span>
+              </button>
+              <AnimatePresence>
+                {showLang && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-4 bg-[#111] border border-white/10 rounded-xl p-2 w-32 shadow-2xl"
+                  >
+                    {languages.map(l => (
+                      <button key={l} onClick={() => { setLang(l); setShowLang(false); }} className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-colors ${lang === l ? 'bg-white text-black' : 'hover:bg-white/10'}`}>
+                        {l}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            <button onClick={() => setIsOpen(true)} className="hover:opacity-70 transition">
+              <Menu size={28} />
+            </button>
+          </div>
         </div>
       </nav>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: "-100%" }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-[60] bg-dark-900/95 backdrop-blur-xl flex flex-col items-center justify-center"
+            exit={{ opacity: 0, y: "-100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-[60] bg-[#050505] flex flex-col items-center justify-center"
           >
-            <button 
-              onClick={() => setIsOpen(false)}
-              className="absolute top-8 right-8 text-white hover:text-neon-purple transition-colors"
-            >
-              <X size={40} />
+            <button onClick={() => setIsOpen(false)} className="absolute top-8 right-8 text-white/50 hover:text-white transition">
+              <X size={32} />
             </button>
-            <div className="flex flex-col items-center gap-8">
-              {navLinks.map((link, idx) => (
+            <div className="flex flex-col items-center gap-8 font-space text-4xl md:text-6xl tracking-tighter">
+              {['home', 'about', 'stack', 'projects', 'contact'].map((item, i) => (
                 <motion.a
-                  key={link.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                  onClick={() => scrollTo(link.href)}
-                  className="text-3xl md:text-5xl font-light text-white/70 hover:text-white hover:glow-text cursor-pointer transition-all uppercase tracking-widest"
+                  key={item}
+                  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+                  onClick={() => scrollTo(`#${item}`)}
+                  className="text-white/40 hover:text-white cursor-pointer transition-colors"
                 >
-                  {link.name}
+                  {t(item)}
                 </motion.a>
               ))}
             </div>
