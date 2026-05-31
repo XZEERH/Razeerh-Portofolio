@@ -11,15 +11,23 @@ export default function Projects() {
   return (
     <section id="projects" className="py-24 relative w-full container mx-auto px-6">
       <div className="mb-16 md:w-1/2">
-        <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter font-space">{t('projects')}</h2>
-        <p className="text-white/50 mt-4 text-lg font-light">Karya terpilih yang menunjukkan kualitas dan dedikasi.</p>
+        {/* Menggunakan translasi Multi-Bahasa untuk Judul dan Sub-judul */}
+        <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter font-space">
+          {t('proj_title')}
+        </h2>
+        <p className="text-white/50 mt-4 text-lg font-light">
+          {t('proj_sub')}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projectsData.map((project, idx) => (
           <motion.div 
             key={project.id}
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}
+            initial={{ opacity: 0, y: 20 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true }} 
+            transition={{ delay: idx * 0.1 }}
             className="bg-[#0a0a0a] rounded-3xl overflow-hidden flex flex-col group border border-white/5 hover:border-white/20 transition-all duration-500"
           >
             {/* Minimalist Project Image / Placeholder */}
@@ -35,16 +43,16 @@ export default function Projects() {
               <p className="text-white/50 text-sm mb-6 flex-1 font-light leading-relaxed">{project.description}</p>
               
               <div className="flex flex-wrap gap-2 mb-8">
-                {project.tech.map(t => (
-                  <span key={t} className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/70 font-medium">
-                    {t}
+                {project.tech.map(tech => (
+                  <span key={tech} className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/70 font-medium">
+                    {tech}
                   </span>
                 ))}
               </div>
 
               <div className="flex gap-3 mt-auto">
                 <a href={project.link} target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-white text-black hover:bg-white/80 font-semibold transition-colors text-sm">
-                  <ExternalLink size={16} /> Demo
+                  <ExternalLink size={16} /> {t('proj_demo')}
                 </a>
                 <a href={project.github} target="_blank" rel="noreferrer" className="flex items-center justify-center p-3 rounded-xl bg-white/5 text-white hover:bg-white/10 border border-white/10 transition-colors">
                   <Github size={20} />
