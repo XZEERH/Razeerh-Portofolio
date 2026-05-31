@@ -19,11 +19,12 @@ function RobotModel() {
   const robotRef = useRef<THREE.Group>(null);
   const headRef = useRef<THREE.Object3D | null>(null);
 
-  // Mencari tulang kepala secara otomatis di dalam GLB
+  // Mencari tulang kepala secara otomatis di dalam GLB (TypeScript sudah dijinakkan)
   useEffect(() => {
     scene.traverse((child) => {
-      if (child.isBone && (child.name.toLowerCase().includes('head') || child.name.toLowerCase().includes('neck'))) {
-        if (!headRef.current) headRef.current = child;
+      const node = child as any; // Menjinakkan TypeScript
+      if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) {
+        if (!headRef.current) headRef.current = node;
       }
     });
   }, [scene]);
