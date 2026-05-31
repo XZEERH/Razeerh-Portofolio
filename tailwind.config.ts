@@ -8,6 +8,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        // Mendaftarkan font premium ke sistem Tailwind
+        sans: ['var(--font-inter)', 'sans-serif'],
+        space: ['var(--font-space)', 'sans-serif'],
+        inter: ['var(--font-inter)', 'sans-serif'],
+      },
       colors: {
         neon: {
           cyan: "#00f3ff",
@@ -19,9 +25,6 @@ const config: Config = {
           800: "#0a0a0a",
           700: "#141414",
         }
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
     },
   },
