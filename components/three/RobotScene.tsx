@@ -19,10 +19,9 @@ function RobotModel() {
   const robotRef = useRef<THREE.Group>(null);
   const headRef = useRef<THREE.Object3D | null>(null);
 
-  // Mencari tulang kepala secara otomatis di dalam GLB (TypeScript sudah dijinakkan)
   useEffect(() => {
     scene.traverse((child) => {
-      const node = child as any; // Menjinakkan TypeScript
+      const node = child as any; 
       if (node.isBone && (node.name.toLowerCase().includes('head') || node.name.toLowerCase().includes('neck'))) {
         if (!headRef.current) headRef.current = node;
       }
@@ -30,29 +29,30 @@ function RobotModel() {
   }, [scene]);
 
   useFrame((state) => {
-    // Idle breathing animation untuk badan
-    const t = state.clock.getElapsedTime();
+    // 1. Kunci mati rotasi badan, hanya animasi nafas (y)
     if (robotRef.current) {
-      robotRef.current.position.y = -2.5 + Math.sin(t * 1.5) * 0.02; 
+      robotRef.current.position.y = -1.5 + Math.sin(state.clock.elapsedTime * 1.5) * 0.015; 
+      robotRef.current.rotation.set(0, 0, 0); // Kunci Total Rotasi Badan
     }
 
-    // Kepala mengikuti mouse dengan limitasi realistis
+    // 2. Tracking murni hanya pada kepala
     if (headRef.current) {
       const pointerX = state.pointer.x;
       const pointerY = state.pointer.y;
       
-      // Limit rotasi agar tidak patah leher (maks 45 derajat)
-      const targetY = THREE.MathUtils.clamp(pointerX * 0.8, -0.8, 0.8);
-      const targetX = THREE.MathUtils.clamp(-pointerY * 0.5, -0.5, 0.5);
+      const targetY = THREE.MathUtils.clamp(pointerX * 1.2, -1.0, 1.0); // Kiri-Kanan
+      const targetX = THREE.MathUtils.clamp(-pointerY * 0.8, -0.6, 0.6); // Atas-Bawah
 
-      headRef.current.rotation.y = THREE.MathUtils.lerp(headRef.current.rotation.y, targetY, 0.05);
-      headRef.current.rotation.x = THREE.MathUtils.lerp(headRef.current.rotation.x, targetX, 0.05);
+      // Smooth tracking menggunakan lerp
+      headRef.current.rotation.y = THREE.MathUtils.lerp(headRef.current.rotation.y, targetY, 0.08);
+      headRef.current.rotation.x = THREE.MathUtils.lerp(headRef.current.rotation.x, targetX, 0.08);
+      headRef.current.rotation.z = 0; // Kunci kemiringan leher
     }
   });
 
-  // Posisi diturunkan agar framing kamera fokus dari perut ke atas
   return (
-    <group ref={robotRef} position={[0, -2.5, 0]} scale={2.8}>
+    // Posisi diturunkan agar framing kamera pas di dada atas dan kepala
+    <group ref={robotRef} position={[0, -1.5, 0]} scale={2.4}>
       <primitive object={scene} />
     </group>
   );
@@ -65,15 +65,16 @@ export default function RobotScene() {
 
   return (
     <Canvas 
-      // Framing Kamera Khusus: Fokus ke dada & kepala
-      camera={{ position: [0, 1.2, 4], fov: 40 }}
-      dpr={[1, 1.5]} // Optimasi Mobile FPS
+      // Framing Kamera Khusus: Fokus tepat di kepala & dada
+      camera={{ position: [0, 0.4, 2.5], fov: 45 }}
+      // Optimasi Performa Mobile (Limit resolusi shadow & pixel ratio)
+      dpr={typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 1.5) : 1} 
+      performance={{ min: 0.5 }}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
     >
       <ambientLight intensity={0.4} />
       <directionalLight position={[5, 5, 5]} intensity={1.2} color="#ffffff" />
       <spotLight position={[-5, 5, -5]} intensity={0.8} color="#e2e8f0" />
-      
       <Environment preset="studio" />
       
       <ModelErrorBoundary>
