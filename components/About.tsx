@@ -1,98 +1,93 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import Image from "next/image";
-
-const fadeVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
-  exit: { opacity: 0, y: -50, transition: { duration: 0.5 } }
-};
+import { useLang } from "@/lib/i18n/LanguageContext";
 
 export default function About() {
+  const { t } = useLang();
+  
+  // Fisika Tali dan Kartu
+  const dragX = useMotionValue(0);
+  const dragY = useMotionValue(0);
+  const rotateZ = useTransform(dragX, [-200, 200], [-15, 15]);
+
   return (
     <section id="about" className="py-32 relative w-full container mx-auto px-6 lg:px-20 flex flex-col lg:flex-row items-center justify-center gap-16 min-h-screen">
       
-      {/* 3D Hanging ID Card */}
-      <motion.div 
-        variants={fadeVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.3 }}
-        exit="exit"
-        className="relative flex-1 flex justify-center w-full"
-      >
-        {/* Tali Card */}
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-1 h-32 bg-gradient-to-b from-dark-900 to-white/20 z-0"></div>
+      {/* 3D Hanging ID Card Area */}
+      <div className="relative flex-1 flex justify-center w-full h-[500px]">
         
+        {/* Tali Lanyard SVG yang Mengikuti Kartu */}
+        <svg className="absolute top-[-100px] left-0 w-full h-[300px] z-0 pointer-events-none" style={{ overflow: 'visible' }}>
+          <motion.line 
+            x1="50%" y1="0" 
+            x2="50%" y2="150" 
+            stroke="rgba(255,255,255,0.15)" strokeWidth="6" strokeLinecap="round"
+            style={{ 
+              x2: useTransform(dragX, x => `calc(50% + ${x}px)`), 
+              y2: useTransform(dragY, y => 150 + y) 
+            }}
+          />
+        </svg>
+
+        {/* Kartu Fisik */}
         <motion.div 
           drag
-          dragConstraints={{ left: -20, right: 20, top: -20, bottom: 20 }}
-          style={{ originY: -1 }} // Titik pivot ayunan di atas
-          animate={{ rotateZ: [-2, 2, -2] }}
-          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-          className="glass-panel rounded-2xl w-72 md:w-80 p-6 flex flex-col items-center relative z-10 cursor-grab active:cursor-grabbing border-t-white/20 shadow-[0_0_30px_rgba(0,243,255,0.1)]"
+          dragConstraints={{ left: -50, right: 50, top: -20, bottom: 50 }}
+          dragElastic={0.2}
+          dragTransition={{ bounceStiffness: 200, bounceDamping: 10 }}
+          style={{ x: dragX, y: dragY, rotateZ }}
+          className="bg-[#0a0a0a] border border-white/10 rounded-3xl w-72 md:w-80 p-6 flex flex-col items-center relative z-10 cursor-grab active:cursor-grabbing shadow-2xl mt-[100px]"
         >
-          {/* Lanyard Clip */}
-          <div className="w-12 h-4 bg-zinc-800 rounded-t-md absolute -top-4 border border-white/10 flex justify-center items-center">
-            <div className="w-4 h-2 rounded-full border border-white/30"></div>
+          {/* Titik Sambungan Tali */}
+          <div className="absolute -top-4 w-12 h-6 bg-[#1a1a1a] rounded-t-lg border-t border-x border-white/20 flex justify-center items-center">
+            <div className="w-6 h-1.5 rounded-full bg-white/30"></div>
           </div>
 
-          <div className="w-full h-64 relative rounded-xl overflow-hidden mb-6 border border-white/10">
-            {/* Foto Profil - Pastikan ada profile.jpg di public/images/ */}
-            <Image 
-              src="/images/profile.jpg" 
-              alt="RAZEERH DEV" 
-              fill 
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 300px"
-              priority
-            />
-            {/* Fallback color if image not found during dev */}
-            <div className="absolute inset-0 bg-dark-800 -z-10 flex items-center justify-center text-xs text-white/20">/images/profile.jpg</div>
+          <div className="w-full h-64 relative rounded-2xl overflow-hidden mb-6 bg-zinc-900 border border-white/5">
+            <Image src="/images/profile.jpg" alt="RAZEERH" fill className="object-cover grayscale hover:grayscale-0 transition-all duration-500" sizes="300px" />
           </div>
-          <h3 className="text-2xl font-bold uppercase tracking-wider text-white">RAZEERH</h3>
-          <p className="text-neon-cyan text-sm tracking-widest mt-1">Fullstack Developer</p>
+          <h3 className="text-2xl font-bold font-space tracking-tight text-white">RAZEERH</h3>
+          <p className="text-white/50 text-sm tracking-wide mt-1 font-inter">Software Engineer</p>
           
-          <div className="w-full mt-6 pt-4 border-t border-white/10 flex justify-between px-2">
-            <div className="text-center">
-              <p className="text-xs text-white/50">ID</p>
-              <p className="text-sm font-mono">#001-DEV</p>
+          <div className="w-full mt-8 pt-4 border-t border-white/5 flex justify-between px-2">
+            <div>
+              <p className="text-[10px] text-white/40 uppercase tracking-widest">ID / Serial</p>
+              <p className="text-sm font-mono text-white/80">DEV-001</p>
             </div>
-            <div className="text-center">
-              <p className="text-xs text-white/50">LEVEL</p>
-              <p className="text-sm font-mono text-neon-purple">SENIOR</p>
+            <div className="text-right">
+              <p className="text-[10px] text-white/40 uppercase tracking-widest">Clearance</p>
+              <p className="text-sm font-mono text-white">LEVEL 9</p>
             </div>
           </div>
         </motion.div>
-      </motion.div>
+      </div>
 
-      {/* Deskripsi */}
+      {/* Deskripsi Linear Style */}
       <motion.div 
-        variants={fadeVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.3 }}
-        exit="exit"
-        className="flex-1 flex flex-col gap-6"
+        initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+        className="flex-1 flex flex-col gap-8"
       >
-        <h2 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-widest glow-text">Tentang Saya</h2>
-        <div className="w-20 h-1 bg-neon-cyan rounded-full mb-4"></div>
-        <p className="text-lg text-white/70 leading-relaxed">
-          Saya adalah pengembang perangkat lunak yang berdedikasi tinggi, berfokus pada penciptaan pengalaman digital masa depan. Mengkhususkan diri dalam arsitektur modern dan desain UI/UX kelas premium.
-        </p>
-        <p className="text-lg text-white/70 leading-relaxed">
-          Dengan pendekatan <span className="text-neon-purple font-semibold">Mobile First</span> dan performa tanpa kompromi, saya membangun website yang tidak hanya berfungsi dengan baik, tetapi juga memberikan kesan visual yang mendalam dan futuristik.
-        </p>
+        <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter font-space">{t('about')}</h2>
+        <div className="text-lg text-white/60 font-inter font-light leading-relaxed space-y-6">
+          <p>
+            Saya adalah pengembang perangkat lunak yang berdedikasi menciptakan pengalaman digital yang mulus dan elegan. Fokus utama saya adalah arsitektur modern dan desain UI/UX yang minimalis namun bertenaga.
+          </p>
+          <p>
+            Mengutamakan performa tanpa kompromi dan pendekatan <strong className="text-white font-medium">Mobile First</strong>, memastikan setiap baris kode bernilai tinggi untuk pengguna akhir.
+          </p>
+        </div>
         
-        <div className="mt-8 flex gap-4">
-          <div className="glass-panel px-6 py-4 rounded-xl border-l-2 border-neon-cyan">
-            <h4 className="text-3xl font-bold text-white">3+</h4>
-            <p className="text-sm text-white/50 uppercase tracking-wider">Tahun Pengalaman</p>
+        <div className="flex gap-6 mt-4">
+          <div className="flex flex-col">
+            <span className="text-4xl font-space font-bold text-white">3+</span>
+            <span className="text-xs text-white/40 uppercase tracking-widest mt-1">Tahun Pengalaman</span>
           </div>
-          <div className="glass-panel px-6 py-4 rounded-xl border-l-2 border-neon-purple">
-            <h4 className="text-3xl font-bold text-white">50+</h4>
-            <p className="text-sm text-white/50 uppercase tracking-wider">Proyek Selesai</p>
+          <div className="w-[1px] bg-white/10" />
+          <div className="flex flex-col">
+            <span className="text-4xl font-space font-bold text-white">50+</span>
+            <span className="text-xs text-white/40 uppercase tracking-widest mt-1">Proyek Sukses</span>
           </div>
         </div>
       </motion.div>
