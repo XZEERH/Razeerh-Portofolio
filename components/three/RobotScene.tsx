@@ -2,49 +2,56 @@
 
 import React, { Component, ReactNode, Suspense, useRef, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF, Environment, Float, ContactShadows, Html } from "@react-three/drei";
+import { useGLTF, Environment, Html } from "@react-three/drei";
 import * as THREE from "three";
 
-// 🛡️ Error Boundary yang sesungguhnya
 class ModelErrorBoundary extends Component<{children: ReactNode}, {hasError: boolean}> {
   state = { hasError: false };
   static getDerivedStateFromError() { return { hasError: true }; }
   render() {
-    if (this.state.hasError) {
-      return (
-        <Html center>
-          <div className="text-red-400 bg-dark-900/90 p-6 border border-red-500/50 rounded-xl text-sm w-80 text-center glass-panel shadow-[0_0_30px_rgba(255,0,0,0.2)]">
-            ⚠️ <b>Robot 3D Gagal Dimuat</b><br/><br/>
-            Cek apakah nama file sudah benar-benar:<br/>
-            <code className="text-neon-cyan font-mono mt-3 block bg-white/5 p-2 rounded">public/models/tesla-robot.glb</code>
-            <br/>(Perhatikan huruf kecil semua, tanpa spasi)
-          </div>
-        </Html>
-      );
-    }
+    if (this.state.hasError) return <Html center><div className="text-white/50 text-sm border border-white/10 px-4 py-2 rounded-lg bg-black/50 backdrop-blur-md">Model Not Found</div></Html>;
     return this.props.children;
   }
 }
 
 function RobotModel() {
-  // Hanya memuat model dari dalam komponen, tanpa preload luar!
   const { scene } = useGLTF("/models/tesla-robot.glb");
-  const robotRef = useRef<THREE.Group | any>(null);
+  const robotRef = useRef<THREE.Group>(null);
+  const headRef = useRef<THREE.Object3D | null>(null);
+
+  // Mencari tulang kepala secara otomatis di dalam GLB
+  useEffect(() => {
+    scene.traverse((child) => {
+      if (child.isBone && (child.name.toLowerCase().includes('head') || child.name.toLowerCase().includes('neck'))) {
+        if (!headRef.current) headRef.current = child;
+      }
+    });
+  }, [scene]);
 
   useFrame((state) => {
-    if (!robotRef.current) return;
-    const pointerX = state.pointer.x;
-    const pointerY = state.pointer.y;
-    
-    const targetRotationX = (pointerY * Math.PI) / 6;
-    const targetRotationY = (pointerX * Math.PI) / 4;
+    // Idle breathing animation untuk badan
+    const t = state.clock.getElapsedTime();
+    if (robotRef.current) {
+      robotRef.current.position.y = -2.5 + Math.sin(t * 1.5) * 0.02; 
+    }
 
-    robotRef.current.rotation.y = THREE.MathUtils.lerp(robotRef.current.rotation.y, targetRotationY, 0.05);
-    robotRef.current.rotation.x = THREE.MathUtils.lerp(robotRef.current.rotation.x, -targetRotationX, 0.05);
+    // Kepala mengikuti mouse dengan limitasi realistis
+    if (headRef.current) {
+      const pointerX = state.pointer.x;
+      const pointerY = state.pointer.y;
+      
+      // Limit rotasi agar tidak patah leher (maks 45 derajat)
+      const targetY = THREE.MathUtils.clamp(pointerX * 0.8, -0.8, 0.8);
+      const targetX = THREE.MathUtils.clamp(-pointerY * 0.5, -0.5, 0.5);
+
+      headRef.current.rotation.y = THREE.MathUtils.lerp(headRef.current.rotation.y, targetY, 0.05);
+      headRef.current.rotation.x = THREE.MathUtils.lerp(headRef.current.rotation.x, targetX, 0.05);
+    }
   });
 
+  // Posisi diturunkan agar framing kamera fokus dari perut ke atas
   return (
-    <group ref={robotRef} position={[0, -2.5, 0]} scale={2.2}>
+    <group ref={robotRef} position={[0, -2.5, 0]} scale={2.8}>
       <primitive object={scene} />
     </group>
   );
@@ -52,33 +59,25 @@ function RobotModel() {
 
 export default function RobotScene() {
   const [mounted, setMounted] = useState(false);
-
-  // Mencegah mismatch antara server dan client
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+  useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
   return (
     <Canvas 
-      camera={{ position: [0, 0, 6], fov: 45 }}
-      dpr={[1, 2]} 
-      gl={{ antialias: true, alpha: true }}
+      // Framing Kamera Khusus: Fokus ke dada & kepala
+      camera={{ position: [0, 1.2, 4], fov: 40 }}
+      dpr={[1, 1.5]} // Optimasi Mobile FPS
+      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
     >
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[10, 10, 5]} intensity={1.5} color="#00f3ff" />
-      <directionalLight position={[-10, 10, -5]} intensity={1} color="#bc13fe" />
-      <spotLight position={[0, 10, 0]} intensity={2} penumbra={1} color="#ffffff" />
+      <ambientLight intensity={0.4} />
+      <directionalLight position={[5, 5, 5]} intensity={1.2} color="#ffffff" />
+      <spotLight position={[-5, 5, -5]} intensity={0.8} color="#e2e8f0" />
       
-      <Environment preset="city" />
+      <Environment preset="studio" />
       
       <ModelErrorBoundary>
-        <Suspense fallback={<Html center><div className="text-neon-cyan animate-pulse font-mono tracking-widest text-sm">LOADING ASSETS...</div></Html>}>
-          <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.5}>
-            <RobotModel />
-          </Float>
-          <ContactShadows position={[0, -3, 0]} opacity={0.5} scale={10} blur={2} far={4} color="#00f3ff" />
+        <Suspense fallback={null}>
+          <RobotModel />
         </Suspense>
       </ModelErrorBoundary>
     </Canvas>
