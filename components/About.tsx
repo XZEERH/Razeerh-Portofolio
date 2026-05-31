@@ -12,6 +12,10 @@ export default function About() {
   const dragY = useMotionValue(0);
   const rotateZ = useTransform(dragX, [-200, 200], [-15, 15]);
 
+  // PERBAIKAN: Posisi SVG dihitung di luar kotak "style" agar TypeScript bahagia
+  const ropeX = useTransform(dragX, (x: number) => `calc(50% + ${x}px)`);
+  const ropeY = useTransform(dragY, (y: number) => 150 + y);
+
   return (
     <section id="about" className="py-32 relative w-full container mx-auto px-6 lg:px-20 flex flex-col lg:flex-row items-center justify-center gap-16 min-h-screen">
       
@@ -22,12 +26,9 @@ export default function About() {
         <svg className="absolute top-[-100px] left-0 w-full h-[300px] z-0 pointer-events-none" style={{ overflow: 'visible' }}>
           <motion.line 
             x1="50%" y1="0" 
-            x2="50%" y2="150" 
+            x2={ropeX}  // <-- Atribut ini sudah dikeluarkan dari blok style
+            y2={ropeY}  // <-- Dan ditempatkan langsung sebagai atribut SVG
             stroke="rgba(255,255,255,0.15)" strokeWidth="6" strokeLinecap="round"
-            style={{ 
-              x2: useTransform(dragX, x => `calc(50% + ${x}px)`), 
-              y2: useTransform(dragY, y => 150 + y) 
-            }}
           />
         </svg>
 
