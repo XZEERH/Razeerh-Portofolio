@@ -5,18 +5,19 @@ import Image from "next/image";
 import { useLang } from "@/lib/i18n/LanguageContext";
 import { useEffect, useRef } from "react";
 
-// Komponen Animasi Angka (Counter dari 0 ke target)
 function AnimatedCounter({ from, to }: { from: number, to: number }) {
   const count = useMotionValue(from);
   const rounded = useTransform(count, (latest) => Math.round(latest));
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
+  const inView = useInView(ref, { once: false }); // Berulang
 
   useEffect(() => {
     if (inView) {
       animate(count, to, { duration: 2, ease: "easeOut" });
+    } else {
+      count.set(from); // Reset saat tidak terlihat
     }
-  }, [inView, count, to]);
+  }, [inView, count, to, from]);
 
   return <motion.span ref={ref}>{rounded}</motion.span>;
 }
@@ -34,7 +35,10 @@ export default function About() {
   return (
     <section id="about" className="py-32 relative w-full container mx-auto px-6 lg:px-20 flex flex-col lg:flex-row items-center justify-center gap-16 min-h-screen">
       
-      <div className="relative flex-1 flex justify-center items-center w-full h-[500px]">
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.8 }}
+        className="relative flex-1 flex justify-center items-center w-full h-[500px]"
+      >
         <div className="absolute inset-0 pointer-events-none flex justify-center">
           <svg className="w-full h-full overflow-visible">
             <motion.line 
@@ -71,14 +75,14 @@ export default function About() {
             </div>
             <div className="text-right">
               <p className="text-[10px] text-white/40 uppercase tracking-widest">Clearance</p>
-              <p className="text-sm font-mono text-white">LEVEL 2</p>
+              <p className="text-sm font-mono text-white">LEVEL 9</p>
             </div>
           </div>
         </motion.div>
-      </div>
+      </motion.div>
 
       <motion.div 
-        initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+        initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.8 }}
         className="flex-1 flex flex-col gap-8"
       >
         <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter font-space">{t('about_title')}</h2>
