@@ -8,10 +8,10 @@ export default function Socials() {
   const { t } = useLang();
 
   return (
-    <section id="contact" className="py-24 relative w-full container mx-auto px-6 border-t border-white/5">
+    <section id="socials" className="py-24 relative w-full container mx-auto px-6 border-t border-white/5">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter font-space">Temukan Saya</h2>
-        <p className="text-white/50 mt-4 text-base font-light">Jejak digital dan portofolio publik saya.</p>
+        <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter font-space">{t('soc_title')}</h2>
+        <p className="text-white/50 mt-4 text-base font-light">{t('soc_sub')}</p>
       </div>
 
       <div className="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
