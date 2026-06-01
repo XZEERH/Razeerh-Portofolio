@@ -75,7 +75,7 @@ export default function About() {
             </div>
             <div className="text-right">
               <p className="text-[10px] text-white/40 uppercase tracking-widest">Clearance</p>
-              <p className="text-sm font-mono text-white">LEVEL 9</p>
+              <p className="text-sm font-mono text-white">LEVEL 2</p>
             </div>
           </div>
         </motion.div>
