@@ -9,8 +9,8 @@ export default function Stack() {
   return (
     <section id="stack" className="py-24 relative w-full container mx-auto px-6">
       <div className="mb-20 md:w-1/2">
-        <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter font-space">{t('stack')}</h2>
-        <p className="text-white/50 mt-4 text-lg font-light">Teknologi esensial yang saya gunakan untuk membangun produk digital.</p>
+        <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter font-space">{t('stack_title')}</h2>
+        <p className="text-white/50 mt-4 text-lg font-light">{t('stack_sub')}</p>
       </div>
 
       <div className="flex flex-col gap-12">
@@ -35,7 +35,6 @@ export default function Stack() {
                       </div>
                       <p className="text-sm text-white/50 font-light leading-relaxed mb-4">{item.desc}</p>
                       
-                      {/* Minimalist Progress Bar */}
                       <div className="w-full h-[2px] bg-white/5 rounded-full overflow-hidden">
                         <motion.div 
                           initial={{ width: 0 }} whileInView={{ width: `${item.percentage}%` }} transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
