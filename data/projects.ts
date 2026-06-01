@@ -22,7 +22,7 @@ export const projectsData = [
     link: "https://azeerh-suspicious-detection.vercel.app",
     github: "https://github.com/XZEERH/Azeerh-Detection-Phising-And-Malware",
     tech: ["Vue.js", "VirusTotal", "CSS3"]
-  }
+  },
   {
     id: 4,
     title: "Downloader Video Tiktok",
@@ -30,5 +30,5 @@ export const projectsData = [
     link: "https://downtik-v1.vercel.app",
     github: "https://github.com/XZEERH/DownTik",
     tech: ["Node.js", "LexCodeAPI", "React", "CSS3"]
-  }
+  },
 ];
