@@ -1,11 +1,11 @@
 export const projectsData = [
   {
     id: 1,
-    title: "Portal Astronomy",
-    description: "Platform portal online astronomi dengan desain modern, serta tempat pusat informasi alam semesta dan pendaftaran menjadi anggota EAC, dan dashboard admin.",
-    link: "https://portal-eac.vercel.app",
-    github: "https://github.com/XZEERH/EAC-PORTAL",
-    tech: ["HTML", "Tailwind", "Firebase"]
+    title: "AI Asisten Chat",
+    description: "Platform AI asisten online dengan desain modern, serta menjawab soalan user dengan tepat dan secara reall-time.",
+    link: "https://azeerh-ai-v2.vercel.app",
+    github: "https://github.com/XZEERH/AZEERH-AI",
+    tech: ["Next.js", "TypeScript", "Google Studio"]
   },
   {
     id: 2,
@@ -20,7 +20,15 @@ export const projectsData = [
     title: "Detected Link Phising",
     description: "Mendeteksi Link mencurigakan berbasis web dengan visualisasi data secara real-time.",
     link: "https://azeerh-suspicious-detection.vercel.app",
-    github: "https://github.com/XZEERH/Azeerh-Detection-Link-Phising-And-Malware",
+    github: "https://github.com/XZEERH/Azeerh-Detection-Phising-And-Malware",
     tech: ["Vue.js", "VirusTotal", "CSS3"]
+  }
+  {
+    id: 4,
+    title: "Downloader Video Tiktok",
+    description: "Download video tiktok tanpa watermark serta kualitas HD tanpa iklan!.",
+    link: "https://downtik-v1.vercel.app",
+    github: "https://github.com/XZEERH/DownTik",
+    tech: ["Node.js", "LexCodeAPI", "React", "CSS3"]
   }
 ];
