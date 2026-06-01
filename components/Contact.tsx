@@ -10,21 +10,23 @@ export default function Contact() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    window.location.href = `mailto:razeerh08@gmail
-com?subject=Pesan dari ${formData.get('name')}&body=${formData.get('message')} (%0A%0ABalas ke: ${formData.get('email')})`;
+    window.location.href = `mailto:hello@razeerh.dev?subject=Pesan dari ${formData.get('name')}&body=${formData.get('message')} (%0A%0ABalas ke: ${formData.get('email')})`;
   };
 
   return (
     <section id="contact" className="py-24 relative w-full container mx-auto px-6 max-w-5xl border-t border-white/5">
-      <div className="mb-16">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6 }}
+        className="mb-16"
+      >
         <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter font-space">{t('cont_title')}</h2>
         <p className="text-white/50 mt-4 text-lg font-light">{t('cont_sub')}</p>
-      </div>
+      </motion.div>
 
       <div className="flex flex-col lg:flex-row gap-8">
         <motion.form 
           onSubmit={handleSubmit}
-          initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+          initial={{ opacity: 0, x: -20, y: 20 }} whileInView={{ opacity: 1, x: 0, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6 }}
           className="flex-1 bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl flex flex-col gap-6 shadow-xl"
         >
           <div className="flex flex-col gap-2">
@@ -45,7 +47,7 @@ com?subject=Pesan dari ${formData.get('name')}&body=${formData.get('message')} (
         </motion.form>
 
         <motion.div 
-          initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+          initial={{ opacity: 0, x: 20, y: 20 }} whileInView={{ opacity: 1, x: 0, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6 }}
           className="lg:w-1/3 bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl flex flex-col justify-between shadow-xl"
         >
           <div>
@@ -67,7 +69,7 @@ com?subject=Pesan dari ${formData.get('name')}&body=${formData.get('message')} (
             </div>
           </div>
 
-          <a href="https://wa.me/6283865255697" target="_blank" rel="noreferrer" className="w-full bg-[#25D366] text-white font-bold py-3 rounded-xl hover:bg-[#1EBE5A] transition-colors mt-8 flex justify-center items-center gap-2">
+          <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className="w-full bg-[#25D366] text-white font-bold py-3 rounded-xl hover:bg-[#1EBE5A] transition-colors mt-8 flex justify-center items-center gap-2">
             <FaWhatsapp size={20} /> {t('cont_wa_btn')}
           </a>
         </motion.div>
