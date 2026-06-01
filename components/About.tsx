@@ -1,8 +1,25 @@
 "use client";
 
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate, useInView } from "framer-motion";
 import Image from "next/image";
 import { useLang } from "@/lib/i18n/LanguageContext";
+import { useEffect, useRef } from "react";
+
+// Komponen Animasi Angka (Counter dari 0 ke target)
+function AnimatedCounter({ from, to }: { from: number, to: number }) {
+  const count = useMotionValue(from);
+  const rounded = useTransform(count, (latest) => Math.round(latest));
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (inView) {
+      animate(count, to, { duration: 2, ease: "easeOut" });
+    }
+  }, [inView, count, to]);
+
+  return <motion.span ref={ref}>{rounded}</motion.span>;
+}
 
 export default function About() {
   const { t } = useLang();
@@ -11,7 +28,6 @@ export default function About() {
   const dragY = useMotionValue(0);
   const rotateZ = useTransform(dragX, [-200, 200], [-15, 15]);
 
-  // Perbaikan Tali: SVG sekarang dihitung presisi langsung menyentuh titik atas kartu
   const ropeX = useTransform(dragX, (x: number) => `calc(50% + ${x}px)`);
   const ropeY = useTransform(dragY, (y: number) => `calc(50% - 130px + ${y}px)`); 
 
@@ -19,7 +35,6 @@ export default function About() {
     <section id="about" className="py-32 relative w-full container mx-auto px-6 lg:px-20 flex flex-col lg:flex-row items-center justify-center gap-16 min-h-screen">
       
       <div className="relative flex-1 flex justify-center items-center w-full h-[500px]">
-        {/* Tali Lanyard SVG Presisi */}
         <div className="absolute inset-0 pointer-events-none flex justify-center">
           <svg className="w-full h-full overflow-visible">
             <motion.line 
@@ -31,10 +46,9 @@ export default function About() {
           </svg>
         </div>
 
-        {/* Kartu Fisik dengan Auto Snap Center */}
         <motion.div 
           drag
-          dragSnapToOrigin={true} // FITUR AUTO KEMBALI KE TENGAH
+          dragSnapToOrigin={true} 
           dragElastic={0.3}
           dragTransition={{ bounceStiffness: 300, bounceDamping: 15 }}
           style={{ x: dragX, y: dragY, rotateZ }}
@@ -57,7 +71,7 @@ export default function About() {
             </div>
             <div className="text-right">
               <p className="text-[10px] text-white/40 uppercase tracking-widest">Clearance</p>
-              <p className="text-sm font-mono text-white">LEVEL 2</p>
+              <p className="text-sm font-mono text-white">LEVEL 9</p>
             </div>
           </div>
         </motion.div>
@@ -75,12 +89,12 @@ export default function About() {
         
         <div className="flex gap-6 mt-4">
           <div className="flex flex-col">
-            <span className="text-4xl font-space font-bold text-white">3+</span>
+            <span className="text-4xl font-space font-bold text-white"><AnimatedCounter from={0} to={1} /></span>
             <span className="text-xs text-white/40 uppercase tracking-widest mt-1">{t('about_exp')}</span>
           </div>
           <div className="w-[1px] bg-white/10" />
           <div className="flex flex-col">
-            <span className="text-4xl font-space font-bold text-white">50+</span>
+            <span className="text-4xl font-space font-bold text-white"><AnimatedCounter from={0} to={25} /></span>
             <span className="text-xs text-white/40 uppercase tracking-widest mt-1">{t('about_proj')}</span>
           </div>
         </div>
