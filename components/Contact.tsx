@@ -10,7 +10,7 @@ export default function Contact() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    window.location.href = `mailto:hello@razeerh.dev?subject=Pesan dari ${formData.get('name')}&body=${formData.get('message')} (%0A%0ABalas ke: ${formData.get('email')})`;
+    window.location.href = `mailto:razeerh08@gmail.com?subject=Pesan dari ${formData.get('name')}&body=${formData.get('message')} (%0A%0ABalas ke: ${formData.get('email')})`;
   };
 
   return (
@@ -69,7 +69,7 @@ export default function Contact() {
             </div>
           </div>
 
-          <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className="w-full bg-[#25D366] text-white font-bold py-3 rounded-xl hover:bg-[#1EBE5A] transition-colors mt-8 flex justify-center items-center gap-2">
+          <a href="https://wa.me/6283865255697" target="_blank" rel="noreferrer" className="w-full bg-[#25D366] text-white font-bold py-3 rounded-xl hover:bg-[#1EBE5A] transition-colors mt-8 flex justify-center items-center gap-2">
             <FaWhatsapp size={20} /> {t('cont_wa_btn')}
           </a>
         </motion.div>
