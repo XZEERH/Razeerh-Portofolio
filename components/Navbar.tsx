@@ -22,7 +22,7 @@ export default function Navbar() {
       <nav className="fixed top-0 w-full z-50 py-4 mix-blend-difference text-white">
         <div className="container mx-auto px-6 flex justify-between items-center">
           <div className="text-xl font-bold tracking-tight font-space cursor-pointer" onClick={() => scrollTo('#home')}>
-            RAZEERH.
+            My Project Portofolio
           </div>
           
           <div className="flex items-center gap-6">
