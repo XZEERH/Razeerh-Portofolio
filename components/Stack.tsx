@@ -8,20 +8,28 @@ export default function Stack() {
   const { t } = useLang();
   return (
     <section id="stack" className="py-24 relative w-full container mx-auto px-6">
-      <div className="mb-20 md:w-1/2">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6 }}
+        className="mb-20 md:w-1/2"
+      >
         <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter font-space">{t('stack_title')}</h2>
         <p className="text-white/50 mt-4 text-lg font-light">{t('stack_sub')}</p>
-      </div>
+      </motion.div>
 
       <div className="flex flex-col gap-12">
         {stackData.map((category) => (
           <div key={category.category}>
-            <h3 className="text-lg font-medium text-white/80 mb-6 font-space">{category.category}</h3>
+            <motion.h3 
+              initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }}
+              className="text-lg font-medium text-white/80 mb-6 font-space"
+            >
+              {category.category}
+            </motion.h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {category.items.map((item, idx) => (
                 <motion.div 
                   key={item.name}
-                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}
+                  initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ delay: (idx % 2) * 0.1, duration: 0.5 }}
                   className="bg-[#0a0a0a] border border-white/5 hover:border-white/20 hover:bg-[#111] p-6 rounded-2xl transition-all duration-300 group"
                 >
                   <div className="flex items-start gap-5">
@@ -37,7 +45,7 @@ export default function Stack() {
                       
                       <div className="w-full h-[2px] bg-white/5 rounded-full overflow-hidden">
                         <motion.div 
-                          initial={{ width: 0 }} whileInView={{ width: `${item.percentage}%` }} transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+                          initial={{ width: 0 }} whileInView={{ width: `${item.percentage}%` }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 1, ease: "easeOut" }}
                           className="h-full bg-white/80"
                         />
                       </div>
