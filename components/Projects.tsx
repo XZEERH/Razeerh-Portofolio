@@ -10,27 +10,25 @@ export default function Projects() {
 
   return (
     <section id="projects" className="py-24 relative w-full container mx-auto px-6">
-      <div className="mb-16 md:w-1/2">
-        {/* Menggunakan translasi Multi-Bahasa untuk Judul dan Sub-judul */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6 }}
+        className="mb-16 md:w-1/2"
+      >
         <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter font-space">
           {t('proj_title')}
         </h2>
         <p className="text-white/50 mt-4 text-lg font-light">
           {t('proj_sub')}
         </p>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projectsData.map((project, idx) => (
           <motion.div 
             key={project.id}
-            initial={{ opacity: 0, y: 20 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true }} 
-            transition={{ delay: idx * 0.1 }}
+            initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.1 }} transition={{ delay: (idx % 3) * 0.1, duration: 0.5 }}
             className="bg-[#0a0a0a] rounded-3xl overflow-hidden flex flex-col group border border-white/5 hover:border-white/20 transition-all duration-500"
           >
-            {/* Minimalist Project Image / Placeholder */}
             <div className="h-48 w-full bg-[#111] relative overflow-hidden flex items-center justify-center border-b border-white/5">
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent z-10"></div>
               <h3 className="text-4xl font-space font-black text-white/5 group-hover:scale-110 transition-transform duration-700 tracking-tighter">
