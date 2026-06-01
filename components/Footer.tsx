@@ -11,7 +11,7 @@ export default function Footer() {
           RAZEERH.
         </div>
         <p className="text-white/40 text-xs font-medium tracking-widest uppercase mb-6">
-          Premium Digital Experience
+          Premium Portofolio Experience
         </p>
         <p className="text-white/30 text-xs font-light">
           © {new Date().getFullYear()} RAZEERH DEV. All rights reserved.
