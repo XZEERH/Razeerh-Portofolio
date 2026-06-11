@@ -40,4 +40,3 @@ export const projectsData = [
     tech: ["vite", "NanzAPI", "TypeScript", "Tailwind", "PWA"]
   },
 ];
-];
