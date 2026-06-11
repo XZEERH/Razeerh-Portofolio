@@ -31,4 +31,13 @@ export const projectsData = [
     github: "https://github.com/XZEERH/DownTik",
     tech: ["Node.js", "LexCodeAPI", "React", "CSS3"]
   },
+  {
+    id: 5,
+    title: "Streaming Anime lengkap dan gratis",
+    description: "Nonton streaming anime secara lengkap gratis tanpa khawatir dengan langganan serta tanpa iklan.",
+    link: "https://kuronime-id.vercel.app",
+    github: "https://github.com/XZEERH/KuroNime-ID",
+    tech: ["vite", "NanzAPI", "TypeScript", "Tailwind", "PWA"]
+  },
+];
 ];
